@@ -38,5 +38,35 @@ services:
       - db
       - rabbitmq
       - redis
+
+  minio:
+    image: minio/minio
+    command: server /data
+    environment:
+      MINIO_ACCESS_KEY: minio_access_key
+      MINIO_SECRET_KEY: minio_secret_key
+    ports:
+      - "9000:9000"
+    volumes:
+      - minio_data:/data
+
+  worker:
+    build: ./worker
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq
+      - QUEUE_NAME=diplomasQueue
+      - MINIO_ENDPOINT=minio
+      - MINIO_ACCESS_KEY=minio_access_key
+      - MINIO_SECRET_KEY=minio_secret_key
+      - MINIO_BUCKET=diplomas
+      - CHROME_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+    depends_on:
+      - rabbitmq
+      - minio
+      - db
+    volumes:
+      - ./worker:/worker
+
 volumes:
   rabbitmq_data:
+  minio_data:

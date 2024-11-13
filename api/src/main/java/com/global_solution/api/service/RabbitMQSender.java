@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 public class RabbitMQSender {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Autowired
     private AmqpTemplate amqpTemplate;
+
     @Value("diplomasQueue")
     private String queueName;
 
